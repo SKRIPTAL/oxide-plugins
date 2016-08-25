@@ -1,11 +1,9 @@
 using System.Linq;
 
-using UnityEngine;
-
 namespace Oxide.Plugins
 {
     [Info("FilterExt", "Wulf/lukespragg", 0.1)]
-    [Description("Extension to Oxide's filter for removing unwanted console messages.")]
+    [Description("Extension to Oxide's filter for removing unwanted console messages")]
 
     class FilterExt : CovalencePlugin
     {
@@ -15,19 +13,19 @@ namespace Oxide.Plugins
 
             #if HURTWORLD
             var filter = Game.Hurtworld.HurtworldExtension.Filter.ToList();
-#endif
-#if REIGNOFKINGS
+            #endif
+            #if REIGNOFKINGS
             var filter = Game.ReignOfKings.ReignOfKingsExtension.Filter.ToList();
-#endif
-#if RUST
+            #endif
+            #if RUST
             var filter = Game.Rust.RustExtension.Filter.ToList();
-#endif
-#if THEFOREST
+            #endif
+            #if THEFOREST
             var filter = Game.TheForest.TheForestExtension.Filter.ToList();
-#endif
-#if UNTURNED
+            #endif
+            #if UNTURNED
             var filter = Game.Unturned.UnturnedExtension.Filter.ToList();
-#endif
+            #endif
 
             #endregion
 
@@ -59,7 +57,7 @@ namespace Oxide.Plugins
 
             #region Update filter list
 
-#if HURTWORLD
+            #if HURTWORLD
             Game.Hurtworld.HurtworldExtension.Filter = filter.ToArray();
             #endif
             #if REIGNOFKINGS
@@ -70,14 +68,12 @@ namespace Oxide.Plugins
             #endif
             #if THEFOREST
             Game.TheForest.TheForestExtension.Filter = filter.ToArray();
-#endif
-#if UNTURNED
+            #endif
+            #if UNTURNED
             Game.Unturned.UnturnedExtension.Filter = filter.ToArray();
-#endif
+            #endif
 
             #endregion
         }
-
-        private void OnServerSave() => PrintWarning("Server saved!");
     }
 }

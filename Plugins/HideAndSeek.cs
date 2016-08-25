@@ -127,10 +127,10 @@ namespace Oxide.Plugins
         void UnhidePlayer(BasePlayer player)
         {
             // Make the player visible
-            player.metabolism.Reset();
-            player.InvokeRepeating("InventoryUpdate", 1f, 0.1f * Random.Range(0.99f, 1.01f));
             player.SetPlayerFlag(BasePlayer.PlayerFlags.Spectating, false);
             player.gameObject.SetLayerRecursive(17);
+            player.metabolism.Reset();
+            player.InvokeRepeating("InventoryUpdate", 1f, 0.1f * Random.Range(0.99f, 1.01f));
 
             // Set the player flags
             SetPropFlags(player);
@@ -381,7 +381,7 @@ namespace Oxide.Plugins
 
         #region Spectate Blocking
 
-        object OnRunCommand(ConsoleSystem.Arg arg)
+        object OnServerCommand(ConsoleSystem.Arg arg)
         {
             if (arg?.connection != null && arg.cmd.namefull == "global.spectate") return true;
             return null;
@@ -420,7 +420,7 @@ namespace Oxide.Plugins
             {
                 Image = {Color = "0.0 0.0 0.0 0.0"},
                 RectTransform = { AnchorMin = "0.026 0.037", AnchorMax = "0.075 0.10" }
-            }, "HUD/Overlay", "taunt");
+            }, "Overlay", "taunt");
             elements.Add(new CuiElement
             {
                 Parent = tauntPanel,

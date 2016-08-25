@@ -12,8 +12,8 @@ using System.Text.RegularExpressions;
 
 namespace Oxide.Plugins
 {
-    [Info("NameManager", "Wulf/lukespragg", "1.0.0")]
-    [Description("Prevents players from connecting with unwanted names.")]
+    [Info("NameManager", "Wulf/lukespragg", "1.0.0", ResourceId = 0)]
+    [Description("Prevents players from connecting with unwanted names")]
 
     class NameManager : CovalencePlugin
     {
@@ -58,10 +58,6 @@ namespace Oxide.Plugins
 
         void Init()
         {
-            #if !HURTWORLD && !REIGNOFKINGS && !RUST && !RUSTLEGACY
-            throw new NotSupportedException("This plugin does not support this game");
-            #endif
-
             LoadDefaultConfig();
             LoadDefaultMessages();
         }
@@ -76,7 +72,7 @@ namespace Oxide.Plugins
 
         bool IsNameInvalid(string name) => !name.ToLower().All(AllowedCharacters.Contains);
 
-        bool IsNameUnique(string name) => players.Online.Any(p => !p.BasePlayer.Nickname.Equals(name));
+        bool IsNameUnique(string name) => players.Online.Any(p => !p.BasePlayer.Name.Equals(name));
 
         string NameCheck(string name, string userId)
         {
@@ -124,13 +120,9 @@ namespace Oxide.Plugins
 
         #endregion
 
-        #region Helper Methods
+        #region Helpers
 
-        T GetConfig<T>(string name, T defaultValue)
-        {
-            if (Config[name] == null) return defaultValue;
-            return (T)Convert.ChangeType(Config[name], typeof(T));
-        }
+        T GetConfig<T>(string name, T defaultValue) => Config[name] == null ? defaultValue : (T) Convert.ChangeType(Config[name], typeof (T));
 
         string GetMessage(string key, string userId = null) => lang.GetMessage(key, this, userId);
 

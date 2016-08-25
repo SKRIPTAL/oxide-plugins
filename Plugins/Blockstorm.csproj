@@ -11,6 +11,10 @@
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <OutputPath>bin\Blockstorm\</OutputPath>
+    <DefineConstants>BLOCKSTORM</DefineConstants>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
       <HintPath>..\..\Oxide\Games\Unity\Oxide.Game.Blockstorm\Dependencies\Assembly-CSharp.dll</HintPath>

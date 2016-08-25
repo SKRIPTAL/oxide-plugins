@@ -45,7 +45,7 @@ namespace Oxide.Plugins
 
         #region Spectate Blocking
 
-        object OnRunCommand(ConsoleSystem.Arg arg)
+        object OnServerCommand(ConsoleSystem.Arg arg)
         {
             if (arg?.connection != null && arg.cmd.namefull == "global.spectate") return true;
             return null;

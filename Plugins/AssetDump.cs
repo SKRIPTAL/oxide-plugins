@@ -18,6 +18,7 @@ namespace Oxide.Plugins
         [ConsoleCommand("asset.show")]
         void ccmdAssetShow(ConsoleSystem.Arg arg)
         {
+            var bob = arg.connection.player;
             if (!arg.HasArgs()) return;
             var player = arg.Player();
             if (player == null) return;

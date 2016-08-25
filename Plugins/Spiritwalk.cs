@@ -77,7 +77,7 @@ namespace Oxide.Plugins
         T GetConfig<T>(string name, T defaultValue)
         {
             if (Config[name] == null) return defaultValue;
-            return (T)Convert.ChangeType(Config[name], typeof(T));
+            return (T) Convert.ChangeType(Config[name], typeof(T));
         }
 
         string GetMessage(string key, string steamId = null) => lang.GetMessage(key, this, steamId);

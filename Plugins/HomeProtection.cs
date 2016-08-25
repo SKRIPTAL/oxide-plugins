@@ -20,15 +20,13 @@ namespace Oxide.Plugins
 
         #region Configuration
 
-        // Settings
-        bool AdminOnly => GetConfig("AdminOnly", false);
-        int RaidTimer => GetConfig("RaidTimer", 0);
+        bool adminOnly;
+        int RaidTimer;
 
         protected override void LoadDefaultConfig()
         {
-            // Settings
-            Config["AdminOnly"] = AdminOnly;
-            Config["RaidTimer"] = RaidTimer;
+            Config["AdminOnly"] = adminOnly = GetConfig("AdminOnly", false);
+            Config["RaidTimer"] = RaidTimer = GetConfig("RaidTimer", 0);
 
             SaveConfig();
         }
@@ -64,7 +62,7 @@ namespace Oxide.Plugins
             {
                 var attacker = info.Initiator.ToPlayer();
 
-                if (AdminOnly && !attacker.IsAdmin()) return true;
+                if (adminOnly && !attacker.IsAdmin()) return true;
                 if (RaidTimer > 0 && !IsRaidable) return true;
                 if (!attacker.CanBuild()) return true;
             }
@@ -73,7 +71,7 @@ namespace Oxide.Plugins
             {
                 var player = entity.ToPlayer();
 
-                if (AdminOnly && !player.IsAdmin()) return true;
+                if (adminOnly && !player.IsAdmin()) return true;
                 if (RaidTimer > 0 && !IsRaidable) return true;
                 if (!player.CanBuild()) return true;
             }
@@ -83,12 +81,12 @@ namespace Oxide.Plugins
 
         #endregion
 
-        #region Helper Methods
+        #region Helpers
 
         T GetConfig<T>(string name, T defaultValue)
         {
             if (Config[name] == null) return defaultValue;
-            return (T)Convert.ChangeType(Config[name], typeof(T));
+            return (T) Convert.ChangeType(Config[name], typeof(T));
         }
 
         #endregion

@@ -111,11 +111,11 @@ namespace Oxide.Plugins
                 Config[category] = data;
                 configChanged = true;
             }
-            if (data.TryGetValue(setting, out value)) return (T)Convert.ChangeType(value, typeof(T));
+            if (data.TryGetValue(setting, out value)) return (T) Convert.ChangeType(value, typeof(T));
             value = defaultValue;
             data[setting] = value;
             configChanged = true;
-            return (T)Convert.ChangeType(value, typeof(T));
+            return (T) Convert.ChangeType(value, typeof(T));
         }
 
         void SetConfigValue<T>(string category, string setting, T newValue)

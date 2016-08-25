@@ -3,11 +3,7 @@ Author: "bawNg"
 Version: V(0, 1, 0)
 
 Init: ->
-  print "JavaScript: Init"
-
-OnServerInitialized: ->
-  print "JavaScript: OnServerInitialized"
-  command.AddConsoleCommand "server.jshi", @Plugin, "sayhi"
+  #command.AddConsoleCommand "server.jshi", @Plugin, "sayhi" -- Not working
 
 LoadDefaultConfig: ->
   print "JavaScript: LoadDefaultConfig"

@@ -19,6 +19,9 @@
     <Reference Include="Assembly-CSharp">
       <HintPath>..\..\Oxide\Games\Unity\Oxide.Game.SevenDays\Dependencies\Assembly-CSharp.dll</HintPath>
     </Reference>
+    <Reference Include="Assembly-CSharp-firstpass">
+      <HintPath>..\..\Oxide\Games\Unity\Oxide.Game.SevenDays\Dependencies\Assembly-CSharp-firstpass.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\Oxide\Oxide.Core\Dependencies\Newtonsoft.Json.dll</HintPath>
     </Reference>

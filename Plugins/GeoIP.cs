@@ -1,12 +1,12 @@
-using Newtonsoft.Json;
-using Oxide.Core;
-using Oxide.Core.Configuration;
-using Oxide.Core.Libraries;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Newtonsoft.Json;
+using Oxide.Core;
+using Oxide.Core.Configuration;
+using Oxide.Core.Libraries;
 
 namespace Oxide.Plugins
 {
@@ -15,8 +15,8 @@ namespace Oxide.Plugins
 
     class GeoIP : RustPlugin
     {
-        bool debug = false; // For development
-        string auth = "?client_id=&client_secret="; // For development
+        const bool debug = false; // For development
+        const string auth = "?client_id=&client_secret="; // For development
 
         JsonSerializerSettings jsonSettings;
         DynamicConfigFile locationConfig;

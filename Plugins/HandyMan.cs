@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
 using Facepunch;
 using Oxide.Core;
-using Oxide.Core.Plugins;
 using Oxide.Core.Configuration;
 
 namespace Oxide.Plugins
 {
-    [Info("HandyMan", "MrMan", "1.0.2")]
+    [Info("HandyMan", "Wulf/lukespragg", "1.0.2")]
     [Description("Provides AOE repair functionality to players in their buildable areas")]
 
     class HandyMan : RustPlugin
@@ -145,14 +144,14 @@ namespace Oxide.Plugins
         {
             lang.RegisterMessages(new Dictionary<string, string>
             {
-                {"Hired", "HandyMan has been hired"},
-                {"Fired", "HandyMan has been fired"},
-                {"Fix", "You fix this one, I'll get the rest"},
-                {"NotAllowed", "You are not allowed to build here - I can't repair for you"},
-                {"IFixed", "Fixed some damage over here..."},
-                {"FixDone", "Guess I fixed them all..."},
-                {"MissingFix", "I'm telling you... it disappeared... I can't find anything to fix"},
-                {"Unavailable", "Sorry, I'm not talking new clients right now"}
+                ["Hired"] = "HandyMan has been hired",
+                ["Fired"] = "HandyMan has been fired",
+                ["Fix"] = "You fix this one, I'll get the rest",
+                ["NotAllowed"] = "You are not allowed to build here - I can't repair for you",
+                ["IFixed"] = "Fixed some damage over here...",
+                ["FixDone"] = "Guess I fixed them all...",
+                ["MissingFix"] = "I'm telling you... it disappeared... I can't find anything to fix",
+                ["Unavailable"] = "Sorry, I'm not talking new clients right now"
             }, this);
         }
 
@@ -199,7 +198,6 @@ namespace Oxide.Plugins
         /// Responsible for publishing help for handyman on request
         /// </summary>
         /// <param name="player"></param>
-        [HookMethod("SendHelpText")]
         void SendHelpText(BasePlayer player)
         {
             //PrintToChat(player, Lang("Help", player.UserIDString)));

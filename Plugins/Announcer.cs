@@ -1,7 +1,7 @@
-﻿using System;using System.Collections.Generic;namespace Oxide.Plugins
+﻿using System.Collections.Generic;using Oxide.Core.Libraries.Covalence;namespace Oxide.Plugins
 {
-    [Info("Announcer", "Wulf/lukespragg", "0.2.0")]
-    [Description("Broadcasts customizable messages when players join/quit.")]
+    [Info("Announcer", "Wulf/lukespragg", "0.2.0", ResourceId = 0)]
+    [Description("Broadcasts customizable messages when players join/quit")]
 
     class Announcer : CovalencePlugin
     {
@@ -10,114 +10,26 @@
 
         #region Localization
 
-        void LoadDefaultMessages()
+        void Init()
         {
             lang.RegisterMessages(new Dictionary<string, string>
-            {                {"PlayerJoined", "{name} joined the survivors"},                {"PlayerQuit", "{name} abandoned the survivors"}            }, this);
+            {                ["PlayerJoined"] = "{0} joined the survivors",                ["PlayerQuit"] = "{0} abandoned the survivors"            }, this);
         }
 
         #endregion
 
-        #region Initialization
+        #region Broadcast Messages        void OnUserConnected(IPlayer player) => server.Broadcast(Lang("PlayerJoined", player.Id, player.Name));
 
-        void Loaded()
-        {
-            #if !HURTWORLD && !REIGNOFKINGS && !RUST && !RUSTLEGACY
-            throw new NotSupportedException("This plugin does not support this game");
-            #endif
-
-            LoadDefaultMessages();
-        }
-
-        #endregion
-
-        #region Broadcast Messages
-
-        #region Hurtworld
-        #if HURTWORLD
-        void OnPlayerConnected(PlayerSession session)
-        {
-            server.Broadcast(GetMessage("PlayerJoined", session.SteamId.ToString()).Replace("{name}", session.Name));
-        }
-        bool OnConnectionNotice() => true;        void OnPlayerDisconnected(PlayerSession session)
-        {
-            server.Broadcast(GetMessage("PlayerQuit", session.SteamId.ToString()).Replace("{name}", session.Name));
-        }
+        void OnUserDisconnected(IPlayer player) => server.Broadcast(Lang("PlayerQuit", player.Id, player.Name));        #if HURTWORLD
+        bool OnConnectionNotice() => true;
         bool OnDisconnectionNotice() => true;
         #endif
-        #endregion
-
-        #region Reign of Kings
-        #if REIGNOFKINGS
-        void OnPlayerConnected(CodeHatch.Engine.Networking.Player player)
-        {
-            server.Broadcast(GetMessage("PlayerJoined", player.Id.ToString()).Replace("{name}", player.Name));
-        }
-
-        void OnPlayerDisconnected(CodeHatch.Engine.Networking.Player player)
-        {
-            server.Broadcast(GetMessage("PlayerQuit", player.Id.ToString()).Replace("{name}", player.Name));
-        }
-        #endif
-        #endregion
-
-        #region Rust
-        #if RUST
-        void OnPlayerConnected(Network.Message packet)
-        {
-            var connection = packet.connection;
-            server.Broadcast(GetMessage("PlayerJoined", connection.username).Replace("{name}", connection.username));
-        }
-
-        void OnPlayerDisconnected(BasePlayer player)
-        {
-            server.Broadcast(GetMessage("PlayerQuit", player.UserIDString).Replace("{name}", player.displayName));
-        }
-        #endif
-        #endregion
-
-        #region Rust Legacy
-        #if RUSTLEGACY
-        void OnPlayerConnected(NetUser netuser)
-        {
-            server.Broadcast(GetMessage("PlayerJoined", netuser.userID.ToString()).Replace("{name}", netuser.displayName));
-        }
-
-        void OnPlayerDisconnected(uLink.NetworkPlayer player)
-        {
-            var netuser = player.GetLocalData<NetUser>();
-            server.Broadcast(GetMessage("PlayerQuit", netuser.userID.ToString()).Replace("{name}", netuser.displayName));
-        }
-        #endif
-        #endregion
-
-        #region The Forest
-        #if THEFOREST
-        void OnPlayerConnected(BoltConnection connection)
-        {
-            if (connection == null && CoopLobby.Instance.MemberCount < 1) return;
-            /*var steamId = forest.IdFromConnection(connection);
-            var name = forest.NameFromId(steamId);
-            server.Broadcast(GetMessage("PlayerJoined", steamId).Replace("{name}", name));*/
-
-            Puts(TheForest.Utils.SaveSlotUtils.GetLocalSlotPath());
-            Puts(TheForest.Utils.SaveSlotUtils.GetCloudSlotPath());
-        }
-
-        void OnPlayerDisconnected(BoltConnection connection)
-        {
-            if (connection == null && CoopLobby.Instance.MemberCount < 1) return;
-            /*var steamId = forest.IdFromConnection(connection);
-            var name = forest.NameFromId(steamId);
-            server.Broadcast(GetMessage("PlayerQuit", steamId).Replace("{name}", name));*/        }
-        #endif
-        #endregion
 
         #endregion
 
-        #region Helper Methods
+        #region Helpers
 
-        string GetMessage(string key, string steamId = null) => lang.GetMessage(key, this, steamId);
+        string Lang(string key, string id = null, params object[] args) => string.Format(lang.GetMessage(key, this, id), args);
 
         #endregion
     }

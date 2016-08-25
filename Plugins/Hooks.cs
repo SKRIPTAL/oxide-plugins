@@ -1,5 +1,9 @@
+#define DEBUG
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using Oxide.Core;
 using Oxide.Core.Libraries.Covalence;
 
 namespace Oxide.Plugins
@@ -49,7 +53,20 @@ namespace Oxide.Plugins
 
         #region Server Hooks (universal)
 
-        private void OnServerInitialized() => HookCalled("OnServerInitialized");
+        private void OnServerInitialized()
+        {
+            HookCalled("OnServerInitialized");
+
+            PrintWarning($"{server.Name} at {server.Address}:{server.Port}");
+            PrintWarning($"Oxide {OxideMod.Version} for {covalence.Game.Humanize()} {server.Version}");
+            //PrintWarning($"World time is: {server.Time.ToString("h:mm tt").ToLower()}");
+            //PrintWarning($"World date is: {server.Time}");
+            timer.Every(1f, () =>
+            {
+                PrintWarning(new DateTime(Convert.ToUInt64(TimeSpan.FromHours(EnvironmentControlCenter.Singleton.GetTime()))).ToString());
+                //PrintWarning(TheForestAtmosphere.Instance.TimeOfDay.ToString());
+            });
+        }
 
         private void OnServerSave() => HookCalled("OnServerSave");
 
@@ -59,67 +76,84 @@ namespace Oxide.Plugins
 
         #region Player Hooks (covalence)
 
-        private object CanUserLogin(string name, string id)
+        private object CanUserLogin(string name, string id, string ip)
         {
             HookCalled("CanUserLogin");
-            PrintWarning($"{name} ({id}) is attempting to login");
+
+            PrintWarning($"{name} ({id}) at {ip} is attempting to login");
+
             return null;
         }
 
-        private void OnUserApproved(string name, string id)
+        private void OnUserApproved(string name, string id, string ip)
         {
             HookCalled("OnUserApproved");
-            PrintWarning($"{name} ({id}) has been approved");
+
+            PrintWarning($"{name} ({id}) at {ip} has been approved");
         }
 
         private object OnUserChat(IPlayer player, string message)
         {
             HookCalled("OnUserChat");
+
             PrintWarning($"{player.Name} said: {message}");
+
             return null;
         }
 
         private void OnUserConnected(IPlayer player)
         {
             HookCalled("OnUserConnected");
-            PrintWarning($"{player.Name} ({player.Id}) connected from {player.ConnectedPlayer.Address}");
-            if (player.ConnectedPlayer.IsAdmin()) PrintWarning($"{player.Name} is admin");
+
+            PrintWarning($"{player.Name} ({player.Id}) connected from {player.Address}");
+            if (player.IsAdmin) PrintWarning($"{player.Name} is admin");
+            PrintWarning($"{player.Name} is {(player.IsBanned ? "banned" : "not banned")}");
+
+            server.Broadcast($"Welcome {player.Name} to {server.Name}!");
+            foreach (var target in players.Connected) target.Message($"Look out... {player.Name} is coming to get you!");
         }
 
         private void OnUserDisconnected(IPlayer player, string reason)
         {
             HookCalled("OnUserDisconnected");
+
             PrintWarning($"{player.Name} ({player.Id}) disconnected for: {reason ?? "Unknown"}");
+            server.Broadcast($"{player.Name} has abandoned us... free loot!");
         }
 
         private void OnUserInit(IPlayer player)
         {
             HookCalled("OnUserInit");
+
             PrintWarning($"{player.Name ?? "Unnamed"} initialized");
         }
 
         private void OnUserSpawn(IPlayer player)
         {
             HookCalled("OnUserSpawn");
+
             PrintWarning($"{player.Name} is spawning now");
         }
 
         private void OnUserSpawned(IPlayer player)
         {
             HookCalled("OnUserSpawned");
-            PrintWarning($"{player.Name} spawned at {player.ConnectedPlayer.Character.Position()}");
+
+            PrintWarning($"{player.Name} spawned at {player.Character.Position()}");
         }
 
         private void OnUserRespawn(IPlayer player)
         {
             HookCalled("OnUserRespawn");
+
             PrintWarning($"{player.Name} is respawning now");
         }
 
         private void OnUserRespawned(IPlayer player)
         {
             HookCalled("OnUserRespawned");
-            PrintWarning($"{player.Name} respawned at {player.ConnectedPlayer.Character.Position()}");
+
+            PrintWarning($"{player.Name} respawned at {player.Character.Position()}");
         }
 
         #endregion
@@ -144,7 +178,7 @@ namespace Oxide.Plugins
 
         private void OnPlayerDeath(PlayerInfos player)
         {
-            PrintWarning("OnPlayerDeath");
+            HookCalled("OnPlayerDeath");
         }
 
         #endregion
@@ -198,6 +232,11 @@ namespace Oxide.Plugins
 
 #if REIGNOFKINGS
 
+        void OnChatCommand(CodeHatch.Engine.Networking.Player player, string command, string[] args)
+        {
+            PrintWarning("OnChatCommand works!");
+        }
+
         #region Entity Hooks
 
         private void OnEntityHealthChange(CodeHatch.Networking.Events.Entities.EntityDamageEvent e)
@@ -237,14 +276,21 @@ namespace Oxide.Plugins
 
         #region Server Hooks
 
+        private void OnNewSave(string name) => HookCalled("OnNewSave");
+
         private void OnTick() => HookCalled("OnTick");
 
         private void OnTerrainInitialized() => HookCalled("OnTerrainInitialized");
 
-        private object OnRunCommand(ConsoleSystem.Arg arg)
+        private object OnServerCommand(ConsoleSystem.Arg arg)
         {
-            HookCalled("OnRunCommand");
-            // TODO: Print command messages
+            HookCalled("OnServerCommand");
+            return null;
+        }
+
+        private object OnRconConnection(System.Net.IPEndPoint ipEndPoint)
+        {
+            HookCalled("OnRconConnection");
             return null;
         }
 
@@ -256,12 +302,6 @@ namespace Oxide.Plugins
         {
             HookCalled("CanBypassQueue");
             return true;
-        }
-
-        private object OnServerCommand(ConsoleSystem.Arg arg)
-        {
-            HookCalled("OnServerCommand");
-            return null;
         }
 
         private bool CanEquipItem(PlayerInventory inventory, Item item)
@@ -434,7 +474,7 @@ namespace Oxide.Plugins
             HookCalled("OnStructureDemolish");
         }
 
-        private void OnStructureRepair(BuildingBlock block, BasePlayer player)
+        private void OnStructureRepair(BaseCombatEntity entity, BasePlayer player)
         {
             HookCalled("OnStructureRepair");
         }
@@ -531,24 +571,57 @@ namespace Oxide.Plugins
 
         #endregion
 
+        #region XP Hooks
+
+        private object CanSpendXp(ulong id, int amount, string item)
+        {
+            HookCalled("CanSpendXp");
+            PrintWarning($"{id} can spend {amount} XP on {item}");
+            return null;
+        }
+
+        private object OnXpEarn(ulong id, float amount, string source)
+        {
+            HookCalled("OnXpEarn");
+            PrintWarning($"{id} will earn {amount} XP from {source.Humanize()}");
+            return null;
+        }
+
+        private void OnXpEarned(ulong id, float amount, string source)
+        {
+            HookCalled("OnXpEarned");
+            PrintWarning($"{id} earned {amount} XP from {source.Humanize()}");
+        }
+
+        private void OnXpReset(ulong id)
+        {
+            HookCalled("OnXpReset");
+            PrintWarning($"XP has been reset for {id}");
+        }
+
+        private void OnXpSet(ulong id, float amount)
+        {
+            HookCalled("OnXpSet");
+            PrintWarning($"XP set to {amount} for {id}");
+        }
+
+        private void OnXpSpent(ulong id, int amount, string item)
+        {
+            HookCalled("OnXpSpent");
+            PrintWarning($"{id} spent {amount} XP on {item}");
+        }
+
+        #endregion
+
 #endif
 
 #if SEVENDAYS
 
         #region Server Hooks
 
-        private void OnRunCommand(ClientInfo client, string[] args)
+        private void OnServerCommand(ClientInfo client, string[] args)
         {
-            HookCalled("OnRunCommand");
-        }
-
-        #endregion
-
-        #region Player Hooks
-
-        private void OnExperienceGained()
-        {
-            HookCalled("OnExperienceGained");
+            HookCalled("OnServerCommand");
         }
 
         #endregion
@@ -579,13 +652,38 @@ namespace Oxide.Plugins
 
 #endif
 
+#if THEFOREST
+
+        void OnPlayerChat(ChatEvent evt)
+        {
+            if (evt.Message.Contains("kick") || evt.Message.Contains("ban"))
+            {
+                var coopKickToken = new CoopKickToken { KickMessage = "You said the magic word!", Banned = false };
+                evt.RaisedBy.Disconnect(coopKickToken);
+            }
+
+            if (evt.Message.Contains("save"))
+            {
+                var gameObject = UnityEngine.GameObject.Find("PlayerPlanePosition");
+                if (gameObject) TheForest.Utils.LocalPlayer.CamFollowHead.planePos = gameObject.transform;
+
+                LevelSerializer.SaveGame("Game");
+                LevelSerializer.Checkpoint();
+                LogWarning("Server has been saved!");
+            }
+
+            HookCalled("OnPlayerChat");
+        }
+
+#endif
+
 #if UNTURNED
 
         #region Server Hooks
 
-        private void OnRunCommand(Steamworks.CSteamID steamId, string command, string arg)
+        private void OnServerCommand(Steamworks.CSteamID steamId, string command, string arg)
         {
-            HookCalled("OnRunCommand");
+            HookCalled("OnServerCommand");
         }
 
         #endregion

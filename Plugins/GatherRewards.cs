@@ -170,7 +170,7 @@ namespace Oxide.Plugins
             if (!info.Initiator?.ToPlayer()) return;
 
             var player = info.Initiator?.ToPlayer();
-            var animal = UppercaseFirst(entity.LookupShortPrefabName().Replace(".prefab", ""));
+            var animal = UppercaseFirst(entity.ShortPrefabName.Replace(".prefab", ""));
 
             int amount;
             if (!config.Settings.Rewards.TryGetValue(animal, out amount) || amount <= 0) return;
@@ -207,7 +207,7 @@ namespace Oxide.Plugins
 
         #endregion
 
-        #region Helper Methods
+        #region Helpers
 
         static string UppercaseFirst(string s)
         {

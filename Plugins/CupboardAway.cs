@@ -1,23 +1,35 @@
+using Oxide.Game.Rust;
+
 namespace Oxide.Plugins
 {
     [Info("CupboardAway", "Wulf/lukespragg", "0.1.0", ResourceId = 0)]
-    [Description("Makes cupboard protection available only if the owner is online.")]
+    [Description("Makes cupboard protection available only if the owner is offline")]
 
-    class CupboardAway : CovalencePlugin
+    class CupboardAway : RustPlugin
     {
         bool OnCupboardAuthorize(BuildingPrivlidge cupboard) => CanAuthorize(cupboard);
 
         bool OnCupboardDeauthorize(BuildingPrivlidge cupboard) => CanAuthorize(cupboard);
 
-        private void OnEntityEnter(TriggerBase trigger, BaseEntity entity)
+        void OnEntityEnter(TriggerBase trigger, BaseEntity entity)
         {
-            if (!(entity is BasePlayer) || !(trigger is BuildPrivilegeTrigger)) return;
+            var player = entity as BasePlayer;
+            var cupboard = trigger as BuildPrivilegeTrigger;
+            if (player == null || cupboard == null) return;
+
+            var owner = cupboard.privlidgeEntity.authorizedPlayers[0];
+            var ownerPlayer = RustCore.FindPlayerById(owner.userid);
+
+            if (ownerPlayer != null && ownerPlayer.isConnected)
+                timer.Once(0.1f, () => player.SetPlayerFlag(BasePlayer.PlayerFlags.HasBuildingPrivilege, true));
         }
 
         static bool CanAuthorize(BuildingPrivlidge cupboard)
         {
-            foreach (var authorized in cupboard.authorizedPlayers) return BasePlayer.Find(authorized.userid.ToString());
-            return false;
+            var owner = cupboard.authorizedPlayers[0];
+            var ownerPlayer = RustCore.FindPlayerById(owner.userid);
+
+            return ownerPlayer?.isConnected ?? true;
         }
     }
 }

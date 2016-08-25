@@ -57,8 +57,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AntiAds.cs" />
-    <Compile Include="AntiGriefJail.cs" />
     <Compile Include="AutoDoors.cs" />
     <Compile Include="ChangeName.cs" />
     <Compile Include="ChatFilter.cs" />
@@ -66,21 +64,14 @@
     <Compile Include="DeathMessages.cs" />
     <Compile Include="Hooks.cs" />
     <Compile Include="include\Ext.Example.cs" />
-    <Compile Include="Help.cs" />
     <Compile Include="Infamy.cs" />
-    <Compile Include="Kits.cs" />
-    <Compile Include="Location.cs" />
     <Compile Include="DynPlayers.cs" />
     <Compile Include="MOTD.cs" />
-    <Compile Include="NameManager.cs" />
     <Compile Include="NoSuicide.cs" />
-    <Compile Include="Password.cs" />
     <Compile Include="PlayersList.cs" />
-    <Compile Include="PrivateMessage.cs" />
-    <Compile Include="Reserved.cs" />
     <Compile Include="ServerSay.cs" />
-    <Compile Include="Slack.cs" />
     <Compile Include="StartMachine.cs" />
+    <Compile Include="VehicleManager.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

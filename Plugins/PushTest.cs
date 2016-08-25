@@ -1,18 +1,21 @@
+// Requires: PushAPI
+
+using Oxide.Core.Libraries.Covalence;
 using Oxide.Core.Plugins;
 
 namespace Oxide.Plugins
 {
     [Info("PushTest", "Wulf/lukespragg", 0.1)]
-    [Description("Push API test plugin.")]
+    [Description("Push API test plugin")]
 
-    class PushTest : RustPlugin
+    class PushTest : CovalencePlugin
     {
         [PluginReference] Plugin PushAPI;
 
-        [ConsoleCommand("global.ptest")]
-        void SendTest()
+        [Command("ptest", "global.ptest")]
+        void ChatCommand(IPlayer player, string command, string[] args)
         {
-            if (!PushAPI)
+            if (PushAPI == null)
             {
                 Puts("Push API is not loaded! http://oxidemod.org/plugins/705/");
                 return;

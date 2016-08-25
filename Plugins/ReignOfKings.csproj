@@ -54,15 +54,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AFK.cs" />
-    <Compile Include="Announcer.cs" />
-    <Compile Include="CountryBlock.cs" />
-    <Compile Include="DuelsManager.cs" />
-    <Compile Include="FilterExt.cs" />
     <Compile Include="Hooks.cs" />
-    <Compile Include="Ping.cs" />
-    <Compile Include="Reserved.cs" />
-    <Compile Include="Whitelist.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

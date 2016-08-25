@@ -22,6 +22,9 @@
     <Reference Include="Assembly-CSharp-firstpass">
       <HintPath>..\..\Oxide\Games\Unity\Oxide.Game.Rust\Dependencies\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
+    <Reference Include="Facepunch.Console">
+      <HintPath>..\..\Oxide\Games\Unity\Oxide.Game.Rust\Dependencies\Facepunch.Console.dll</HintPath>
+    </Reference>
     <Reference Include="Facepunch.Network">
       <HintPath>..\..\Oxide\Games\Unity\Oxide.Game.Rust\Dependencies\Facepunch.Network.dll</HintPath>
     </Reference>
@@ -58,6 +61,9 @@
     <Reference Include="Rust.Data">
       <HintPath>..\..\Oxide\Games\Unity\Oxide.Game.Rust\Dependencies\Rust.Data.dll</HintPath>
     </Reference>
+    <Reference Include="Rust.Xp">
+      <HintPath>..\..\Oxide\Games\Unity\Oxide.Game.Rust\Dependencies\Rust.Xp.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
@@ -69,35 +75,47 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AntiAdminAbuse.cs" />
     <Compile Include="AssetDump.cs" />
-    <Compile Include="Duel.cs" />
+    <Compile Include="BabelChat.cs" />
+    <Compile Include="ConnectionDB.cs" />
+    <Compile Include="ConnectionInfo.cs" />
+    <Compile Include="Exodus.cs" />
     <Compile Include="FpsMonitor.cs" />
     <Compile Include="Godmode.cs" />
     <Compile Include="HandyMan.cs" />
-    <Compile Include="Kirc.cs" />
-    <Compile Include="Kits.cs" />
+    <Compile Include="Hookie.cs" />
     <Compile Include="LootProtection.cs" />
+    <Compile Include="GuiTimer.cs" />
+    <Compile Include="MagicArea.cs" />
+    <Compile Include="MagicChat.cs" />
+    <Compile Include="MagicCraft.cs" />
+    <Compile Include="MagicDescription.cs" />
+    <Compile Include="MagicSigns.cs" />
+    <Compile Include="MagicTeleportation.cs" />
+    <Compile Include="MagicVariables.cs" />
+    <Compile Include="MailingList.cs" />
+    <Compile Include="Metabolism.cs" />
+    <Compile Include="ReplaceOnBroken.cs" />
+    <Compile Include="StructureGrades.cs" />
+    <Compile Include="UsableToBelt.cs" />
+    <Compile Include="XpBooster.cs" />
     <Compile Include="NameManager.cs" />
-    <Compile Include="NoDecay.cs" />
     <Compile Include="NoDurability.cs" />
     <Compile Include="NoSuicide.cs" />
     <Compile Include="LimitRCON.cs" />
-    <Compile Include="PvXSelector.cs" />
+    <Compile Include="OnDeath.cs" />
     <Compile Include="QuickSort.cs" />
     <Compile Include="RepairBuildings.cs" />
-    <Compile Include="Reserved.cs" />
-    <Compile Include="ShowHealth.cs" />
     <Compile Include="AutoDoors.cs" />
     <Compile Include="AutoFurnaces.cs" />
-    <Compile Include="CharitySigns.cs" />
-    <Compile Include="DeathSigns.cs" />
-    <Compile Include="HeliInbound.cs" />
+    <Compile Include="DynSigns.cs" />
+    <Compile Include="Inbound.cs" />
     <Compile Include="HideAndSeek.cs" />
     <Compile Include="HomeSigns.cs" />
     <Compile Include="MoneyTime.cs" />
     <Compile Include="NoCold.cs" />
     <Compile Include="NoSleepers.cs" />
-    <Compile Include="NoSteam.cs" />
     <Compile Include="Parachute.cs" />
     <Compile Include="Possession.cs" />
     <Compile Include="RealisticFall.cs" />
@@ -105,13 +123,11 @@
     <Compile Include="Slap.cs" />
     <Compile Include="SleeperGuard.cs" />
     <Compile Include="Spectate.cs" />
+    <Compile Include="StartProtection.cs" />
     <Compile Include="ThirdPerson.cs" />
-    <Compile Include="TwitchAuth.cs" />
     <Compile Include="VACKicker.cs" />
     <Compile Include="Vanish.cs" />
-    <Compile Include="AutoLearn.cs" />
     <Compile Include="ChatCleaner.cs" />
-    <Compile Include="ChatSize.cs" />
     <Compile Include="CupboardAway.cs" />
     <Compile Include="CupboardProtection.cs" />
     <Compile Include="Logger.cs" />
@@ -119,7 +135,6 @@
     <Compile Include="NoResearch.cs" />
     <Compile Include="NoSupplySignal.cs" />
     <Compile Include="HomeProtection.cs" />
-    <Compile Include="ServerTags.cs" />
     <Compile Include="Developer.cs" />
     <Compile Include="Exporter.cs" />
     <Compile Include="FilterExt.cs" />
@@ -130,9 +145,8 @@
     <Compile Include="Protocol.cs" />
     <Compile Include="PushTest.cs" />
     <Compile Include="QuickSmelt.cs" />
-    <Compile Include="DecayControl.cs" />
     <Compile Include="Unstuck.cs" />
-    <Compile Include="WeaponDamageScaler.cs" />
+    <Compile Include="ZLevelsRemastered.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

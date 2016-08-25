@@ -11,6 +11,10 @@
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <OutputPath>bin\ARK\</OutputPath>
+    <DefineConstants>ARK</DefineConstants>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\Oxide\Oxide.Core\Dependencies\Newtonsoft.Json.dll</HintPath>

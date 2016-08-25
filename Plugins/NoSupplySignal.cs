@@ -1,7 +1,7 @@
 namespace Oxide.Plugins
 {
-    [Info("NoSupplySignal", "Wulf/lukespragg", 0.1)]
-    [Description("Prevents airdrops triggering from supply signals.")]
+    [Info("NoSupplySignal", "Wulf/lukespragg", 0.1, ResourceId = 0)]
+    [Description("Prevents supply drops triggering from supply signals")]
 
     class NoSupplySignal : RustPlugin
     {

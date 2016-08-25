@@ -40,11 +40,24 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AFK.cs" />
+    <Compile Include="Announcer.cs" />
+    <Compile Include="AntiAds.cs" />
+    <Compile Include="Babel.cs" />
+    <Compile Include="BabelChat.cs" />
     <Compile Include="CountryBlock.cs" />
     <Compile Include="DonationClaim.cs" />
+    <Compile Include="Donations.cs" />
     <Compile Include="Hooks.cs" />
+    <Compile Include="NameManager.cs" />
     <Compile Include="Ping.cs" />
-    <Compile Include="TimerTest.cs" />
+    <Compile Include="Inbox.cs" />
+    <Compile Include="Reserved.cs" />
+    <Compile Include="RollTheDice.cs" />
+    <Compile Include="Slack.cs" />
+    <Compile Include="SlackChat.cs" />
+    <Compile Include="SlackNotices.cs" />
+    <Compile Include="SlackReport.cs" />
+    <Compile Include="SteamGroup.cs" />
     <Compile Include="Whitelist.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

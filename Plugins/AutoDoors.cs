@@ -11,7 +11,7 @@ using Oxide.Core.Libraries.Covalence;
 
 namespace Oxide.Plugins
 {
-    [Info("AutoDoors", "Wulf/lukespragg", "3.1.1", ResourceId = 1924)]
+    [Info("AutoDoors", "Wulf/lukespragg", "3.1.3", ResourceId = 1924)]
     [Description("Automatically closes doors behind players after X seconds")]
 
     class AutoDoors : CovalencePlugin
@@ -39,14 +39,18 @@ namespace Oxide.Plugins
 
         bool cancelOnKill;
         int defaultDelay;
+        bool excludeUnowned;
         int maximumDelay;
         int minimumDelay;
         bool usePermissions;
 
         protected override void LoadDefaultConfig()
         {
+            //Config["AllowGates"] = allowGates = GetConfig("AllowGates", true);
+            //Config["AllowGarages"] = allowGarages = GetConfig("AllowGarages", true);
             Config["CancelOnKill"] = cancelOnKill = GetConfig("CancelOnKill", false);
             Config["DefaultDelay"] = defaultDelay = GetConfig("DefaultDelay", 5);
+            Config["ExcludeUnowned"] = excludeUnowned = GetConfig("ExcludeUnowned", false);
             Config["MaximumDelay"] = maximumDelay = GetConfig("MaximumDelay", 30);
             Config["MinimumDelay"] = minimumDelay = GetConfig("MinimumDelay", 5);
             Config["UsePermissions"] = usePermissions = GetConfig("UsePermissions", false);
@@ -115,6 +119,7 @@ namespace Oxide.Plugins
                 if (cancelOnKill && session.WorldPlayerEntity.GetComponent<PlayerStatManager>().Dead) return;
 
                 door.DoorCollider.enabled = true;
+                door.RemoveRPCsByName("DOP");
                 door.RPC("DOP", uLink.RPCMode.OthersBuffered, false);
                 door.IsOpen = false;
             });
@@ -135,6 +140,7 @@ namespace Oxide.Plugins
                 if (cancelOnKill && session.WorldPlayerEntity.GetComponent<PlayerStatManager>().Dead) return;
 
                 door.DoorCollider.enabled = true;
+                door.RemoveRPCsByName("DOP");
                 door.RPC("DOP", uLink.RPCMode.OthersBuffered, false);
                 door.IsOpen = false;
             });
@@ -155,6 +161,7 @@ namespace Oxide.Plugins
                 if (cancelOnKill && session.WorldPlayerEntity.GetComponent<PlayerStatManager>().Dead) return;
 
                 door.DoorCollider.enabled = true;
+                door.RemoveRPCsByName("DOP");
                 door.RPC("DOP", uLink.RPCMode.OthersBuffered, false);
                 door.IsOpen = false;
             });
@@ -164,7 +171,13 @@ namespace Oxide.Plugins
         #if RUST
         void OnDoorOpened(Door door, BasePlayer player)
         {
-            if (door == null || !door.IsOpen() || door.LookupPrefabName().Contains("shutter")) return;
+            #if DEBUG
+            PrintWarning($"Prefab: {door?.ShortPrefabName}");
+            PrintWarning($"OwnerID: {door?.OwnerID}");
+            #endif
+
+            if (door == null || !door.IsOpen() || door.ShortPrefabName.Contains("shutter")) return;
+            if (door.OwnerID == 0 && excludeUnowned) return;
             if (usePermissions && !IsAllowed(player.UserIDString, permAuto)) return;
 
             int time;
@@ -186,15 +199,11 @@ namespace Oxide.Plugins
 
         #region Helpers
 
-        T GetConfig<T>(string name, T defaultValue)
-        {
-            if (Config[name] == null) return defaultValue;
-            return (T)Convert.ChangeType(Config[name], typeof(T));
-        }
-
-        bool IsAllowed(string id, string perm) => permission.UserHasPermission(id, perm);
+        T GetConfig<T>(string name, T value) => Config[name] == null ? value : (T)Convert.ChangeType(Config[name], typeof(T));
 
         string Lang(string key, string id = null, params object[] args) => string.Format(lang.GetMessage(key, this, id), args);
+
+        bool IsAllowed(string id, string perm) => permission.UserHasPermission(id, perm);
 
         #endregion
     }

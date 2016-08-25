@@ -82,8 +82,7 @@ namespace Oxide.Plugins
         [Command("claim", "claimdonation", "claimreward")]
         void ChatCommand(IPlayer player, string command, string[] args)
         {
-            var playerEmail = string.Join("", args);
-            playerEmail = playerEmail.Replace("@", "@@");
+            var playerEmail = string.Join("", args).Replace("@", "@@");
             string packageClaimed;
 
             connection = mySql.OpenDb(config.DatabaseHost, config.DatabasePort, config.DatabaseName, config.DatabaseUser, config.DatabasePassword, this);
@@ -102,7 +101,7 @@ namespace Oxide.Plugins
 
                 if (packageClaimed.Length < 3)
                 {
-                    Reply(player, Lang("NoUnclaimed", player.Id), playerEmail.Replace("@@", "@"));
+                    Reply(player, Lang("NoUnclaimed", player.Id, playerEmail));
                 }
                 else
                 {
@@ -110,12 +109,12 @@ namespace Oxide.Plugins
                     if (config.Packages.TryGetValue(packageKey, out consoleCommands))
                     {
                         RunConsoleCommands(consoleCommands, player.Id);
-                        Reply(player, Lang("Claimed", player.Id), packageClaimed);
+                        Reply(player, Lang("Claimed", player.Id, packageClaimed));
                         Puts($"{player} has claimed donation package {packageClaimed}");
                     }
                     else
                     {
-                        Reply(player, Lang("NoPackage", player.Id), packageClaimed);
+                        Reply(player, Lang("NoPackage", player.Id, packageClaimed));
                         Puts($"{player} tried to claim {packageClaimed}, but the package could not be found in the config!");
                     }
                 }
@@ -131,17 +130,12 @@ namespace Oxide.Plugins
 
         void RunConsoleCommands(List<string> commandsList, string playerName)
         {
-            foreach (var command in commandsList)
-                server.Command(string.Format(command, playerName));
+            foreach (var command in commandsList) server.Command(string.Format(command, playerName));
         }
 
         #region Helpers
 
-        T GetConfig<T>(string name, T defaultValue)
-        {
-            if (Config[name] == null) return defaultValue;
-            return (T)Convert.ChangeType(Config[name], typeof(T));
-        }
+        T GetConfig<T>(string name, T value) => Config[name] == null ? value : (T)Convert.ChangeType(Config[name], typeof(T));
 
         string Lang(string key, string id = null, params object[] args) => string.Format(lang.GetMessage(key, this, id), args);
 

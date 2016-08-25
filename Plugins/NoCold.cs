@@ -1,7 +1,7 @@
 ﻿namespace Oxide.Plugins
 {
     [Info("NoCold", "Wulf/lukespragg", 0.1, ResourceId = 0)]
-    [Description("Stops players from getting cold.")]
+    [Description("Stops players from getting cold")]
 
     class NoCold : RustPlugin
     {
