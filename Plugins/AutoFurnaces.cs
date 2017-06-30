@@ -3,7 +3,7 @@ namespace Oxide.Plugins
     [Info("AutoFurnaces", "Wulf/lukespragg", "1.1.3", ResourceId = 1140)]
     [Description("Automatically starts all furnaces after a server restart")]
 
-    class AutoFurnaces : RustPlugin
+    class AutoFurnaces : CovalencePlugin
     {
         void OnServerInitialized()
         {

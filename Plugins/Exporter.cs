@@ -1,39 +1,54 @@
+// Reference: Rust.Workshop
+
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using Facepunch.Steamworks;
+using Newtonsoft.Json;
+using Rust;
 
 namespace Oxide.Plugins
 {
     [Info("Exporter", "The Oxide Team", 1.0)]
     [Description("Exports game data for the Oxide API Docs")]
-
-    class Exporter : RustPlugin
+    public class Exporter : RustPlugin
     {
+        private static Exporter instance;
+
+        private static DateTime dateTime;
+
+        private readonly FieldInfo skins2 = typeof(ItemDefinition).GetField("_skins2", BindingFlags.NonPublic | BindingFlags.Instance);
+
+        private void OnServerInitialized()
+        {
+            instance = this;
+            webrequest.EnqueueGet("http://s3.amazonaws.com/s3.playrust.com/icons/inventory/rust/schema.json", ReadScheme, this);
+        }
+
         #region Items list
 
         [ConsoleCommand("export.items")]
         void ExportItems()
         {
+            var export = new ExportLogger("ItemListDocs");
             var items = ItemManager.itemList;
             var itemList = items.OrderBy(x => x.shortname).ToList();
 
             // Item List: http://docs.oxidemod.org/rust/#item-list
-            Log("ItemListDocs", "# Item List");
-            Log("ItemListDocs", "");
-            Log("ItemListDocs", "| Item Id       | Item Name                    | Item Shortname           |");
-            Log("ItemListDocs", "|---------------|------------------------------|--------------------------|");
+            export.Log("# Item List");
+            export.Log("");
+            export.Log("| Item Id       | Item Name                    | Item Shortname           |");
+            export.Log("|---------------|------------------------------|--------------------------|");
 
             foreach (var item in itemList)
             {
-                var idSpace = string.Empty;
                 var displayname = item.displayName.english.Replace("\t", "").Replace("\r", "").Replace("\n", "");
-                var shortname = item.shortname.Replace("\t", " ").Replace("\r", "").Replace("\n", "");
-                for (var i = 0; i < 14 - item.itemid.ToString().Length; i++) idSpace += " ";
-                var nameSpace = string.Empty;
-                for (var i = 0; i < 29 - displayname.Length; i++) nameSpace += " ";
-                var shortnameSpace = string.Empty;
-                for (var i = 0; i < 25 - shortname.Length; i++) shortnameSpace += " ";
+                var idSpacer = Fillup(item.itemid.ToString(), 14);
+                var nameSpacer = Fillup(displayname, 29);
+                var snameSpacer = Fillup(item.shortname, 25);
 
-                Log("ItemListDocs", $"| {item.itemid}{idSpace}| {displayname}{nameSpace}| {shortname}{shortnameSpace}|");
+                export.Log($"| {item.itemid}{idSpacer}| {displayname}{nameSpacer}| {item.shortname}{snameSpacer}|");
             }
         }
 
@@ -41,41 +56,43 @@ namespace Oxide.Plugins
 
         #region Skins list
 
+        private class ItemSkin
+        {
+            public readonly int Id;
+            public readonly string Name;
+
+            public ItemSkin(int id, string name)
+            {
+                Id = id;
+                Name = name;
+            }
+        }
+
         [ConsoleCommand("export.skins")]
         void ExportSkins()
         {
+            var export = new ExportLogger("ItemSkinsDocs");
             var items = ItemManager.itemList;
-            var itemList = items.OrderBy(x => x.shortname).ToList();
+            var itemList = items.OrderBy(x => x.displayName.english).ToList();
 
             // Item Skins: http://docs.oxidemod.org/rust/#item-skins
-            Log("ItemSkinsDocs", "# Item Skins");
+            export.Log("# Item Skins");
 
             foreach (var item in itemList)
             {
-                var idSpace = string.Empty;
                 var displayname = item.displayName.english.Replace("\t", "").Replace("\r", "").Replace("\n", "");
-                var shortname = item.shortname.Replace("\t", " ").Replace("\r", "").Replace("\n", "");
-                for (var i = 0; i < 14 - item.itemid.ToString().Length; i++) idSpace += " ";
-                var nameSpace = string.Empty;
-                for (var i = 0; i < 29 - displayname.Length; i++) nameSpace += " ";
-                var shortnameSpace = string.Empty;
-                for (var i = 0; i < 25 - shortname.Length; i++)  shortnameSpace += " ";
+                var skins = GetSkins(item);
+                if (skins.Count == 0) continue;
+                export.Log("");
+                export.Log($"## {displayname} ({item.shortname})");
+                export.Log("| Skin Id      | Skin name                         |");
+                export.Log("|--------------|-----------------------------------|");
 
-                if (item.skins.Length == 0) continue;
-                Log("ItemSkinsDocs", "");
-                Log("ItemSkinsDocs", $"## {displayname}");
-                Log("ItemSkinsDocs", "| Skin Id      | Skin name                         |");
-                Log("ItemSkinsDocs", "|--------------|-----------------------------------|");
-
-                foreach (var skin in item.skins.OrderBy(x => x.invItem?.displayName.english))
+                foreach (var skin in skins.OrderBy(x => x.Name))
                 {
-                    idSpace = string.Empty;
-                    shortnameSpace = string.Empty;
-                    for (var i = 0; i < 13 - skin.id.ToString().Length; i++) idSpace += " ";
-                    var skinname = skin.invItem?.displayName.english ?? displayname;
-                    for (var i = 0; i < 34 - skinname.Length; i++) shortnameSpace += " ";
-
-                    Log("ItemSkinsDocs", $"| {skin.id}{idSpace}| {skinname}{shortnameSpace}|");
+                    var idSpacer = Fillup(skin.Id.ToString(), 13);
+                    var nameSpacer = Fillup(skin.Name, 34);
+                    export.Log($"| {skin.Id}{idSpacer}| {skin.Name}{nameSpacer}|");
                 }
             }
         }
@@ -87,22 +104,23 @@ namespace Oxide.Plugins
         [ConsoleCommand("export.prefabs")]
         void ExportPrefabs()
         {
+            var export = new ExportLogger("PrefabListDocs");
             // Prefab List: http://docs.oxidemod.org/rust/#prefab-list
-            Log("PrefabListDocs", "# Prefab List");
+            export.Log("# Prefab List");
 
-            foreach (var str in GameManifest.Get().pooledStrings)
+            foreach (var str in GameManifest.Current.pooledStrings.OrderBy(x => x.str))
             {
                 if (!str.str.StartsWith("assets/")) continue;
-                
+
                 // Autospawn: assets/bundled/prefabs/autospawn/
                 // FX: assets/bundled/prefabs/fx/
                 // Content: assets/content/
                 // Prefabs: assets/prefabs/
                 // Third Party: assets/standard assets/third party/
-                
+
                 //var prefab = str.str.Substring(str.str.LastIndexOf("/", StringComparison.Ordinal) + 1).Replace(".prefab", "");
-                
-                Log("PrefabListDocs", $"| {str.str} |");
+
+                export.Log($"| {str.str} |");
             }
         }
 
@@ -110,10 +128,63 @@ namespace Oxide.Plugins
 
         #region Helpers
 
-        static void Log(string fileName, string content)
+        private class ExportLogger
         {
-            var dateTime = DateTime.Now.ToString("yyMMdd_HHmmss");
-            ConVar.Server.Log($"oxide/logs/{fileName}_{dateTime}.txt", content);
+            private readonly string name;
+
+            public ExportLogger(string name)
+            {
+                this.name = name;
+            }
+
+            public void Log(string line) => instance.LogToFile(name, line, instance);
+
+        }
+
+        private string Fillup(string value, int chars)
+        {
+            var retval = string.Empty;
+            for (var i = 0; i < chars - value.Length; i++)
+                retval += " ";
+            return retval;
+        }
+
+        private void ReadScheme(int code, string response)
+        {
+            if (response != null && code == 200)
+            {
+                var schema = JsonConvert.DeserializeObject<Rust.Workshop.ItemSchema>(response);
+                var defs = new List<Inventory.Definition>();
+                foreach (var item in schema.items)
+                {
+                    if (string.IsNullOrEmpty(item.itemshortname)) continue;
+                    var steamItem = Global.SteamServer.Inventory.CreateDefinition((int)item.itemdefid);
+                    steamItem.Name = item.name;
+                    steamItem.SetProperty("itemshortname", item.itemshortname);
+                    steamItem.SetProperty("workshopid", item.workshopid);
+                    steamItem.SetProperty("workshopdownload", item.workshopdownload);
+                    defs.Add(steamItem);
+                }
+
+                Global.SteamServer.Inventory.Definitions = defs.ToArray();
+
+                foreach (var item in ItemManager.itemList)
+                    skins2.SetValue(item, Global.SteamServer.Inventory.Definitions.Where(x => (x.GetStringProperty("itemshortname") == item.shortname) && !string.IsNullOrEmpty(x.GetStringProperty("workshopdownload"))).ToArray());
+
+                Puts($"Loaded {Global.SteamServer.Inventory.Definitions.Length} approved workshop skins.");
+            }
+            else
+            {
+                PrintWarning($"Failed to load approved workshop skins... Error {code}");
+            }
+        }
+
+        private List<ItemSkin> GetSkins(ItemDefinition def)
+        {
+            var skins = new List<ItemSkin>();
+            skins.AddRange(def.skins.Select(skin => new ItemSkin(skin.id, skin.invItem.displayName.english)));
+            skins.AddRange(def.skins2.Select(skin => new ItemSkin(skin.GetProperty<int>("workshopid"), skin.Name)));
+            return skins;
         }
 
         #endregion

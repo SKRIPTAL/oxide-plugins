@@ -17,7 +17,7 @@ namespace Oxide.Plugins
 
         void Init()
         {
-            lang.RegisterMessages(new Dictionary<string, string> { ["NotAllowed"] = "Sorry, you can't use '{0}' right now" }, this);
+            lang.RegisterMessages(new Dictionary<string, string> { ["NotAllowed"] = "You are not allowed to use the '{0}' command" }, this);
             permission.RegisterPermission(permAllow, this);
         }
 
@@ -30,7 +30,7 @@ namespace Oxide.Plugins
         {
             if (!HasPermission(player.UserIDString, permAllow))
             {
-                SendReply(player, Lang("NotAllowed", player.UserIDString, command));
+                Player.Reply(player, Lang("NotAllowed", player.UserIDString, command));
                 return;
             }
 

@@ -6,25 +6,22 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Oxide.Core;
 using Oxide.Core.Configuration;
-using Oxide.Core.Libraries;
 
 namespace Oxide.Plugins
 {
     [Info("GeoIP", "Wulf/lukespragg", "0.1.3", ResourceId = 1365)]
-    [Description("Provides an API to obtain IP address information from a local database.")]
+    [Description("Provides an API to obtain IP address information from a local database")]
 
-    class GeoIP : RustPlugin
+    class GeoIP : CovalencePlugin
     {
-        const bool debug = false; // For development
         const string auth = "?client_id=&client_secret="; // For development
 
+        Dictionary<string, BlockEntry> octetBlocks = new Dictionary<string, BlockEntry>();
         JsonSerializerSettings jsonSettings;
         DynamicConfigFile locationConfig;
         LocationData locationData;
         DynamicConfigFile blockConfig;
         BlockData blockData;
-        Dictionary<string, BlockEntry> octetBlocks = new Dictionary<string, BlockEntry>();
-        readonly WebRequests web = Interface.Oxide.GetLibrary<WebRequests>("WebRequests");
 
         class LocationData
         {
@@ -82,18 +79,20 @@ namespace Oxide.Plugins
             var download_url = "https://raw.githubusercontent.com/lukespragg/geoip-csv/master/geoip-locations-en.csv";
             var headers = new Dictionary<string, string> {["User-Agent"] = "Oxide-Awesomesauce" };
 
-            web.EnqueueGet(check_url, (api_code, api_response) =>
+            webrequest.EnqueueGet(check_url, (api_code, api_response) =>
             {
                 if (api_code != 200 || api_response == null)
                 {
                     Puts("Checking for locations EN update failed! (" + api_code + ")");
-                    if (debug) Puts(api_response);
+                    #if DEBUG
+                    Puts(api_response);
+                    #endif
                     return;
                 }
 
                 var json = JsonConvert.DeserializeObject<Dictionary<string, object>>(api_response, jsonSettings);
-                string latest_sha = (string)json["sha"];
-                string current_sha = locationData.hash;
+                var latest_sha = (string)json["sha"];
+                var current_sha = locationData.hash;
 
                 if (latest_sha == current_sha)
                 {
@@ -104,7 +103,7 @@ namespace Oxide.Plugins
                 Puts("Updating locations EN data to commit " + latest_sha.Substring(0, 7) + "...");
                 locationData.hash = latest_sha;
 
-                web.EnqueueGet(download_url, (code, response) =>
+                webrequest.EnqueueGet(download_url, (code, response) =>
                 {
                     if (code != 200 || response == null)
                     {
@@ -135,18 +134,20 @@ namespace Oxide.Plugins
             var download_url = "https://raw.githubusercontent.com/lukespragg/geoip-json/master/geoip-blocks-ipv4.csv";
             var headers = new Dictionary<string, string> {["User-Agent"] = "Oxide-Awesomesauce" };
 
-            web.EnqueueGet(check_url, (api_code, api_response) =>
+            webrequest.EnqueueGet(check_url, (api_code, api_response) =>
             {
                 if (api_code != 200 || api_response == null)
                 {
                     Puts("Checking for blocks IPv4 update failed! (" + api_code + ")");
-                    if (debug) Puts(api_response);
+                    #if DEBUG
+                    Puts(api_response);
+                    #endif
                     return;
                 }
 
                 var json = JsonConvert.DeserializeObject<Dictionary<string, object>>(api_response, jsonSettings);
-                string latest_sha = string.Empty;
-                string current_sha = blockData.hash;
+                var latest_sha = string.Empty;
+                var current_sha = blockData.hash;
 
                 foreach (Dictionary<string, object> file in json["tree"] as List<object>)
                     if ((string)file["path"] == "geoip-blocks-ipv4.csv")
@@ -162,7 +163,7 @@ namespace Oxide.Plugins
                 Puts("Updating blocks IPv4 data to commit " + latest_sha.Substring(0, 7) + "...");
                 blockData.hash = latest_sha;
 
-                web.EnqueueGet(download_url, (code, response) =>
+                webrequest.EnqueueGet(download_url, (code, response) =>
                 {
                     if (code != 200 || response == null) timer.Once(30f, UpdateBlockData);
 
@@ -177,7 +178,7 @@ namespace Oxide.Plugins
 
         LocationEntry GetLocationData(string ip)
         {
-            string[] values = ip.Split('.');
+            var values = ip.Split('.');
 
             BlockEntry block;
             if (octetBlocks.TryGetValue(values[0] + "." + values[1], out block))
@@ -198,8 +199,10 @@ namespace Oxide.Plugins
             var location = GetLocationData(ip);
             if (location != null)
             {
-                string country_name = location.country_name;
-                if (debug) Puts("Country name for IP " + ip + " is " + country_name);
+                var country_name = location.country_name;
+                #if DEBUG
+                Puts("Country name for IP " + ip + " is " + country_name);
+                #endif
                 return country_name;
             }
             return "Unknown";
@@ -210,8 +213,10 @@ namespace Oxide.Plugins
             var location = GetLocationData(ip);
             if (location != null)
             {
-                string country_iso_code = location.country_iso_code;
-                if (debug) Puts("Country code for IP " + ip + " is " + country_iso_code);
+                var country_iso_code = location.country_iso_code;
+                #if DEBUG
+                Puts("Country code for IP " + ip + " is " + country_iso_code);
+                #endif
                 return country_iso_code;
             }
             return "Unknown";
@@ -222,8 +227,10 @@ namespace Oxide.Plugins
             var location = GetLocationData(ip);
             if (location != null)
             {
-                string continent_name = location.continent_name;
-                if (debug) Puts("Continent name for IP " + ip + " is " + continent_name);
+                var continent_name = location.continent_name;
+                #if DEBUG
+                Puts("Continent name for IP " + ip + " is " + continent_name);
+                #endif
                 return continent_name;
             }
             return "Unknown";
@@ -234,8 +241,10 @@ namespace Oxide.Plugins
             var location = GetLocationData(ip);
             if (location != null)
             {
-                string continent_code = location.continent_code;
-                if (debug) Puts("Continent code for IP " + ip + " is " + continent_code);
+                var continent_code = location.continent_code;
+                #if DEBUG
+                Puts("Continent code for IP " + ip + " is " + continent_code);
+                #endif
                 return continent_code;
             }
             return "Unknown";
@@ -246,8 +255,10 @@ namespace Oxide.Plugins
             var location = GetLocationData(ip);
             if (location != null)
             {
-                string locale_code = location.locale_code;
-                if (debug) Puts("Locale for IP " + ip + " is " + locale_code);
+                var locale_code = location.locale_code;
+                #if DEBUG
+                Puts("Locale for IP " + ip + " is " + locale_code);
+                #endif
                 return locale_code;
             }
             return "Unknown";
@@ -263,21 +274,21 @@ namespace Oxide.Plugins
         {
             // Get lines
             if (value == null) return null;
-            string[] lines = value.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+            var lines = value.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
             if (lines.Length < 2) Puts("Must have header line.");
 
             // Get headers
-            string[] headers = SplitQuotedLine(lines.First(), ',', false);
+            var headers = SplitQuotedLine(lines.First(), ',', false);
 
             // Build JSON array
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             sb.AppendLine("[");
-            for (int i = 1; i < lines.Length; i++)
+            for (var i = 1; i < lines.Length; i++)
             {
-                string[] fields = SplitQuotedLine(lines[i], ',', false);
+                var fields = SplitQuotedLine(lines[i], ',', false);
                 if (fields.Length != headers.Length) Puts("Field count must match header count.");
                 var jsonElements = headers.Zip(fields, (header, field) => $"{header}: {field}").ToArray();
-                string jsonObject = "{" + $"{string.Join(",", jsonElements)}" + "}";
+                var jsonObject = "{" + $"{string.Join(",", jsonElements)}" + "}";
                 if (i < lines.Length - 1)
                     jsonObject += ",";
                 sb.AppendLine(jsonObject);

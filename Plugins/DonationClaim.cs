@@ -1,18 +1,19 @@
+// Reference: Oxide.Core.MySql
+
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Oxide.Ext.MySql;
 using Oxide.Core.Database;
 using Oxide.Core.Libraries.Covalence;
 
 namespace Oxide.Plugins
 {
-    [Info("DonationClaim", "Wulf/lukespragg", "1.0.1", ResourceId = 1923)]
+    [Info("DonationClaim", "Wulf/lukespragg", "1.0.2", ResourceId = 1923)]
     [Description("Players can claim rewards for automatic PayPal donations")]
 
     class DonationClaim : CovalencePlugin
     {
-        readonly Ext.MySql.Libraries.MySql mySql = new Ext.MySql.Libraries.MySql();
+        readonly Core.MySql.Libraries.MySql mySql = new Core.MySql.Libraries.MySql();
         Connection connection;
         DefaultConfig config;
 
@@ -42,10 +43,8 @@ namespace Oxide.Plugins
         {
             PrintWarning("Creating a new configuration file");
             Config.Clear();
-
             config = new DefaultConfig();
             Config.WriteObject(config, true);
-
             SaveConfig();
         }
 
@@ -55,7 +54,9 @@ namespace Oxide.Plugins
 
         void LoadDefaultMessages()
         {
-            lang.RegisterMessages(new Dictionary<string, string>            {
+            // English
+            lang.RegisterMessages(new Dictionary<string, string>
+            {
                 ["Claimed"] = "You claimed the {0} donation package. Thank you for your donation!",
                 ["NoPackage"] = "Package {0} could not be found! Please notify an admin",
                 ["NoUnclaimed"] = "No unclaimed rewards available for email address: {0}"
@@ -101,7 +102,7 @@ namespace Oxide.Plugins
 
                 if (packageClaimed.Length < 3)
                 {
-                    Reply(player, Lang("NoUnclaimed", player.Id, playerEmail));
+                    player.Reply(Lang("NoUnclaimed", player.Id, playerEmail));
                 }
                 else
                 {
@@ -109,12 +110,12 @@ namespace Oxide.Plugins
                     if (config.Packages.TryGetValue(packageKey, out consoleCommands))
                     {
                         RunConsoleCommands(consoleCommands, player.Id);
-                        Reply(player, Lang("Claimed", player.Id, packageClaimed));
+                        player.Reply(Lang("Claimed", player.Id, packageClaimed));
                         Puts($"{player} has claimed donation package {packageClaimed}");
                     }
                     else
                     {
-                        Reply(player, Lang("NoPackage", player.Id, packageClaimed));
+                        player.Reply(Lang("NoPackage", player.Id, packageClaimed));
                         Puts($"{player} tried to claim {packageClaimed}, but the package could not be found in the config!");
                     }
                 }
@@ -133,14 +134,6 @@ namespace Oxide.Plugins
             foreach (var command in commandsList) server.Command(string.Format(command, playerName));
         }
 
-        #region Helpers
-
-        T GetConfig<T>(string name, T value) => Config[name] == null ? value : (T)Convert.ChangeType(Config[name], typeof(T));
-
         string Lang(string key, string id = null, params object[] args) => string.Format(lang.GetMessage(key, this, id), args);
-
-        static void Reply(IPlayer player, string message, params object[] args) => player.Reply(string.Format(message, args));
-
-        #endregion
     }
 }

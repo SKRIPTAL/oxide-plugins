@@ -22,16 +22,9 @@ namespace Oxide.Plugins
     {
         #region Initialization
 
-        const string permChute = "parachute.use";
+        const string permUse = "parachute.use";
 
-        void Init()
-        {
-            #if !RUST
-            throw new NotSupportedException("This plugin does not support this game");
-            #endif
-
-            permission.RegisterPermission(permChute, this);
-        }
+        void Init() => permission.RegisterPermission(permUse, this);
 
         #endregion
 
@@ -42,7 +35,7 @@ namespace Oxide.Plugins
 
         void DeployChute(BasePlayer player)
         {
-            if (!HasPermission(player.UserIDString, permChute)) return;
+            if (!HasPermission(player.UserIDString, permUse)) return;
 
             var playerPos = player.transform.position;
             var playerRot = player.transform.rotation;
@@ -65,7 +58,7 @@ namespace Oxide.Plugins
             newBody.angularVelocity = Vector3Ex.Range(-1.75f, 1.75f);
             newBody.drag = 0.5f * (newBody.mass / 5f);
             newBody.angularDrag = 0.2f * (newBody.mass / 5f);
-            Physics.gravity =  new Vector3(0, -50, 0);
+            Physics.gravity = new Vector3(0, -50, 0);
 
             // Set player view
             player.SetPlayerFlag(BasePlayer.PlayerFlags.ThirdPersonViewmode, true);
@@ -74,7 +67,7 @@ namespace Oxide.Plugins
 
         void OnPlayerInput(BasePlayer player, InputState input)
         {
-            if (input.WasJustPressed(BUTTON.JUMP) && !player.IsOnGround() && !player.IsFlying())
+            if (input.WasJustPressed(BUTTON.JUMP) && !player.IsOnGround() && !player.IsFlying)
             {
                 var playerPos = player.transform.position;
                 var groundPos = GetGroundPosition(playerPos);
@@ -90,14 +83,12 @@ namespace Oxide.Plugins
 
         void KillChute(BasePlayer player)
         {
-            // Remove parachute
             foreach (var child in player.children.Where(child => child.name.EndsWith("parachute.prefab")))
             {
                 player.RemoveChild(child);
                 child.Kill();
             }
 
-            // Restore player view
             player.SendConsoleCommand("graphics.fov 75");
             player.SetPlayerFlag(BasePlayer.PlayerFlags.ThirdPersonViewmode, false);
         }
@@ -111,11 +102,10 @@ namespace Oxide.Plugins
         void OnEntityDeath(BaseEntity entity)
         {
             var player = entity as BasePlayer;
-            if (player)
-            {
-                KillChute(player);
-                if (chuteTimer.ContainsKey(player.UserIDString)) chuteTimer[player.UserIDString].Destroy();
-            }
+            if (player == null) return;
+
+            KillChute(player);
+            if (chuteTimer.ContainsKey(player.UserIDString)) chuteTimer[player.UserIDString].Destroy();
         }
 
         void Unload()
@@ -132,10 +122,10 @@ namespace Oxide.Plugins
 
         #region Helpers
 
-        T GetConfig<T>(string name, T defaultValue)
+        T GetConfig<T>(string name, T value)
         {
-            if (Config[name] == null) return defaultValue;
-            return (T) Convert.ChangeType(Config[name], typeof(T));
+            if (Config[name] == null) return value;
+            return (T)Convert.ChangeType(Config[name], typeof(T));
         }
 
         bool HasPermission(string id, string perm) => permission.UserHasPermission(id, perm);

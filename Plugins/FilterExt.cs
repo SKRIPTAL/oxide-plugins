@@ -2,12 +2,12 @@ using System.Linq;
 
 namespace Oxide.Plugins
 {
-    [Info("FilterExt", "Wulf/lukespragg", 0.1)]
+    [Info("FilterExt", "Wulf/lukespragg", "0.2.0", ResourceId = 1396)]
     [Description("Extension to Oxide's filter for removing unwanted console messages")]
 
     class FilterExt : CovalencePlugin
     {
-        void Loaded()
+        void Init()
         {
             #region Get existing filter list
 
@@ -20,6 +20,9 @@ namespace Oxide.Plugins
             #if RUST
             var filter = Game.Rust.RustExtension.Filter.ToList();
             #endif
+            #if RUSTLEGACY
+            var filter = Game.RustLegacy.RustExtension.Filter.ToList();
+            #endif
             #if THEFOREST
             var filter = Game.TheForest.TheForestExtension.Filter.ToList();
             #endif
@@ -31,24 +34,9 @@ namespace Oxide.Plugins
 
             #region Add messages to filter
 
-            // Rust
             filter.Add(", serialization");
             filter.Add("- deleting");
             filter.Add("[event] assets/");
-
-            /*
-            filter.Add("ERROR building certificate chain");
-            filter.Add("Enforcing SpawnPopulation Limits");
-            filter.Add("Finished writing containers for save, waiting on save thread");
-            filter.Add("Reporting Performance Data");
-            filter.Add("Saving complete");
-            filter.Add("Starting game save to file");
-            filter.Add("TimeWarning:");
-            filter.Add("Writing to disk completed from background thread");
-            filter.Add("but max allowed is");
-            */
-
-            // Hurtworld
             filter.Add("SteamServerConnectFailure: k_EResultServiceUnavailable");
             filter.Add("SteamServerConnectFailure: k_EResultNoConnection");
             filter.Add("SteamServerConnected");
@@ -65,6 +53,9 @@ namespace Oxide.Plugins
             #endif
             #if RUST
             Game.Rust.RustExtension.Filter = filter.ToArray();
+            #endif
+            #if RUSTLEGACY
+            Game.RustLegacy.RustExtension.Filter = filter.ToArray();
             #endif
             #if THEFOREST
             Game.TheForest.TheForestExtension.Filter = filter.ToArray();

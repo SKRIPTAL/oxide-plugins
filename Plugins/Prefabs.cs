@@ -10,7 +10,7 @@ namespace Oxide.Plugins
         {
             if (player.net.connection.authLevel != 2)
             {
-                SendReply(player, "You do not have permission to use this command!");
+                Player.Reply(player, "You do not have permission to use this command!");
                 return;
             }
 
@@ -20,9 +20,9 @@ namespace Oxide.Plugins
         [ConsoleCommand("global.prefabs")]
         void ConsoleDump(ConsoleSystem.Arg arg)
         {
-            if (arg.connection != null && arg.connection?.authLevel != 2)
+            if (arg.Connection?.authLevel != 2)
             {
-                SendReply(arg, "You do not have permission to use this command!");
+                arg.ReplyWith("You do not have permission to use this command!");
                 return;
             }
 
