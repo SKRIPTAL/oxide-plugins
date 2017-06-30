@@ -4,45 +4,23 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{2FFB5732-C054-4786-B89B-5864C668F018}</ProjectGuid>
+    <ProjectGuid>{C802D031-CD90-4DEB-ABB7-8DF85AFDAE56}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>TheForest</RootNamespace>
-    <AssemblyName>TheForest</AssemblyName>
+    <RootNamespace>Blackwake</RootNamespace>
+    <AssemblyName>Blackwake</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
-    <OutputPath>bin\TheForest\</OutputPath>
-    <DefineConstants>THEFOREST</DefineConstants>
+    <OutputPath>bin\Blackwake\</OutputPath>
+    <DefineConstants>BLACKWAKE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
-      <HintPath>../../Oxide/Games/Unity/Oxide.Game.TheForest/Patched/Assembly-CSharp.dll</HintPath>
-    </Reference>
-
-    <Reference Include="Assembly-CSharp-firstpass">
-      <HintPath>../../Oxide/Games/Unity/Oxide.Game.TheForest/Dependencies/Assembly-CSharp-firstpass.dll</HintPath>
-    </Reference>
-    <Reference Include="Assembly-UnityScript">
-      <HintPath>../../Oxide/Games/Unity/Oxide.Game.TheForest/Patched/Assembly-UnityScript.dll</HintPath>
-    </Reference>
-    <Reference Include="bolt">
-      <HintPath>../../Oxide/Games/Unity/Oxide.Game.TheForest/Dependencies/bolt.dll</HintPath>
-    </Reference>
-    <Reference Include="bolt.user">
-      <HintPath>../../Oxide/Games/Unity/Oxide.Game.TheForest/Dependencies/bolt.user.dll</HintPath>
-    </Reference>
-    <Reference Include="PlayMaker">
-      <HintPath>../../Oxide/Games/Unity/Oxide.Game.TheForest/Dependencies/PlayMaker.dll</HintPath>
-    </Reference>
-    <Reference Include="udpkit">
-      <HintPath>../../Oxide/Games/Unity/Oxide.Game.TheForest/Dependencies/udpkit.dll</HintPath>
-    </Reference>
-    <Reference Include="udpkit.common">
-      <HintPath>../../Oxide/Games/Unity/Oxide.Game.TheForest/Dependencies/udpkit.common.dll</HintPath>
+      <HintPath>../../Oxide/Games/Unity/Oxide.Game.Blockstorm/Patched/Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>../../Oxide/Games/Unity/Oxide.Game.TheForest/Dependencies/UnityEngine.dll</HintPath>
+      <HintPath>../../Oxide/Games/Unity/Oxide.Game.Blockstorm/Dependencies/UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="Oxide.Core">
       <HintPath>../../Oxide/Oxide.Core/bin/Release/Oxide.Core.dll</HintPath>
@@ -59,8 +37,8 @@
     <Reference Include="Oxide.Core.Unity">
       <HintPath>../../Oxide/Extensions/Oxide.Core.Unity/bin/Release/Oxide.Core.Unity.dll</HintPath>
     </Reference>
-    <Reference Include="Oxide.Game.TheForest">
-      <HintPath>../../Oxide/Games/Unity/Oxide.Game.TheForest/bin/Release/Oxide.Game.TheForest.dll</HintPath>
+    <Reference Include="Oxide.Game.Blockstorm">
+      <HintPath>../../Oxide/Games/Unity/Oxide.Game.Blockstorm/bin/Release/Oxide.Game.Blockstorm.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net35\Newtonsoft.Json.dll</HintPath>
@@ -74,6 +52,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DevTest.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

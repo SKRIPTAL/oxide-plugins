@@ -16,23 +16,23 @@
     <DefineConstants>COVALENCE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\Oxide\Oxide.Core\Dependencies\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="Oxide.Core">
-      <HintPath>..\..\Oxide\Oxide.Core\bin\Release\Oxide.Core.dll</HintPath>
+      <HintPath>../../Oxide/Oxide.Core/bin/Release/Oxide.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Oxide.Ext.CSharp">
-      <HintPath>..\..\Oxide\Extensions\Oxide.Ext.CSharp\bin\Release\Oxide.Ext.CSharp.dll</HintPath>
+    <Reference Include="Oxide.Core.CSharp">
+      <HintPath>../../Oxide/Extensions/Oxide.Core.CSharp/bin/Release/Oxide.Core.CSharp.dll</HintPath>
     </Reference>
-    <Reference Include="Oxide.Ext.MySql">
-      <HintPath>..\..\Oxide\Extensions\Oxide.Ext.MySQL\bin\Release\Oxide.Ext.MySql.dll</HintPath>
+    <Reference Include="Oxide.Core.MySql">
+      <HintPath>../../Oxide/Extensions/Oxide.Core.MySQL/bin/Release/Oxide.Core.MySql.dll</HintPath>
     </Reference>
-    <Reference Include="Oxide.Ext.SQLite">
-      <HintPath>..\..\Oxide\Extensions\Oxide.Ext.SQLite\bin\Release\Oxide.Ext.SQLite.dll</HintPath>
+    <Reference Include="Oxide.Core.SQLite">
+      <HintPath>../../Oxide/Extensions/Oxide.Core.SQLite/bin/Release/Oxide.Core.SQLite.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net35\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="protobuf-net">
-      <HintPath>..\..\Oxide\Oxide.Core\Dependencies\protobuf-net.dll</HintPath>
+      <HintPath>../../Oxide/Oxide.Core/Dependencies/protobuf-net.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -41,14 +41,11 @@
   <ItemGroup>
     <Compile Include="AFK.cs" />
     <Compile Include="Announcer.cs" />
-    <Compile Include="AntiAds.cs" />
     <Compile Include="Babel.cs" />
     <Compile Include="BabelChat.cs" />
     <Compile Include="CountryBlock.cs" />
     <Compile Include="DonationClaim.cs" />
-    <Compile Include="Donations.cs" />
-    <Compile Include="Hooks.cs" />
-    <Compile Include="NameManager.cs" />
+    <Compile Include="DevTest.cs" />
     <Compile Include="Ping.cs" />
     <Compile Include="Inbox.cs" />
     <Compile Include="Reserved.cs" />
@@ -57,8 +54,11 @@
     <Compile Include="SlackChat.cs" />
     <Compile Include="SlackNotices.cs" />
     <Compile Include="SlackReport.cs" />
-    <Compile Include="SteamGroup.cs" />
+    <Compile Include="SteamGroups.cs" />
     <Compile Include="Whitelist.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
