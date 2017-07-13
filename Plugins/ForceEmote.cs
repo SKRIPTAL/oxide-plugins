@@ -7,20 +7,11 @@ namespace Oxide.Plugins
 {
     [Info("ForceEmote", "Wulf/lukespragg", "0.2.1", ResourceId = 1684)]
     [Description("Force another player to do an emote on command")]
-
-    class ForceEmote : CovalencePlugin
+    public class ForceEmote : CovalencePlugin
     {
         #region Initialization
-
-        const string permUse = "forceemote.use";
-
-        void Init()
-        {
-            LoadDefaultMessages();
-            permission.RegisterPermission(permUse, this);
-        }
-
-        void LoadDefaultMessages()
+         
+        private new void LoadDefaultMessages()
         {
             // English
             lang.RegisterMessages(new Dictionary<string, string>
@@ -35,12 +26,19 @@ namespace Oxide.Plugins
             }, this);
         }
 
+        private const string permUse = "forceemote.use";
+
+        private void Init()
+        {
+            permission.RegisterPermission(permUse, this);
+        }
+
         #endregion
 
         #region Command
 
         [Command("force")]
-        void Command(IPlayer player, string command, string[] args)
+        private void Command(IPlayer player, string command, string[] args)
         {
             if (!player.HasPermission(permUse))
             {
@@ -85,7 +83,7 @@ namespace Oxide.Plugins
 
         #region Emotes
 
-        void ForceEmotes(IPlayer target, IPlayer player, string emote)
+        private void ForceEmotes(IPlayer target, IPlayer player, string emote)
         {
             var targetSession = target.Object as PlayerSession;
             var eManager = targetSession?.WorldPlayerEntity.GetComponent<EmoteManagerServer>();
@@ -124,7 +122,7 @@ namespace Oxide.Plugins
 
         #region Helpers
 
-        string Lang(string key, string id = null, params object[] args) => string.Format(lang.GetMessage(key, this, id), args);
+        private string Lang(string key, string id = null, params object[] args) => string.Format(lang.GetMessage(key, this, id), args);
 
         #endregion
     }

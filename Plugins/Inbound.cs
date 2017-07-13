@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Oxide.Plugins
 {
-    [Info("Inbound", "Wulf/lukespragg", "0.3.4", ResourceId = 1457)]
+    [Info("Inbound", "Wulf/lukespragg", "0.4.0", ResourceId = 1457)]
     [Description("Notifies all players when a helicopter or supply drop is inbound")]
 
     class Inbound : RustPlugin
@@ -47,14 +47,13 @@ namespace Oxide.Plugins
         void Init()
         {
             LoadDefaultConfig();
-            LoadDefaultMessages();
         }
 
         #endregion
 
         #region Localization
 
-        void LoadDefaultMessages()
+        private new void LoadDefaultMessages()
         {
             // English
             lang.RegisterMessages(new Dictionary<string, string>
@@ -86,7 +85,7 @@ namespace Oxide.Plugins
             var distance = Vector3.Distance(entity.transform.position, GroundPosition(entity.transform.position));
             if (distance >= 10f) { timer.Once(1f, () => LandingCheck(entity)); return; }
 
-            DrawArrow(entity);
+            //DrawArrow(entity); // TODO: Disable for now, blocked for non-admin in Rust client
         }
 
         void DrawArrow(BaseEntity entity)
@@ -121,7 +120,7 @@ namespace Oxide.Plugins
 
         void Broadcast(string key, params object[] args)
         {
-            foreach (var player in BasePlayer.activePlayerList) PrintToChat(player, Lang(key, player.UserIDString, args));
+            foreach (var player in BasePlayer.activePlayerList) Player.Message(player, Lang(key, player.UserIDString, args));
         }
 
         /*Color HexToColor(string hex)

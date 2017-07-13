@@ -1009,6 +1009,12 @@ namespace Oxide.Plugins
             HookCalled("OnPlayerChat");
         }
 
+        private object OnServerCommand(string command, string[] args)
+        {
+            PrintWarning($"{command} {string.Concat(args)} executed");
+            return null;
+        }
+
         #endregion
 
 #endif

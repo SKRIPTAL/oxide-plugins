@@ -6,8 +6,7 @@ namespace Oxide.Plugins
 {
     [Info("StartMachine", "Wulf/lukespragg", "2.1.0", ResourceId = 1586)]
     [Description("Starts machines automatically on server startup and by manual control")]
-
-    class StartMachine : CovalencePlugin
+    public class StartMachine : CovalencePlugin
     {
         #region Initialization
 

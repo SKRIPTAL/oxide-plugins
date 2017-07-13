@@ -22,6 +22,9 @@
     <Reference Include="Assembly-CSharp-firstpass">
       <HintPath>../../Oxide/Games/Unity/Oxide.Game.Rust/Dependencies/Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
+    <Reference Include="Facepunch.Console">
+      <HintPath>../../Oxide/Games/Unity/Oxide.Game.Rust/Patched/Facepunch.Console.dll</HintPath>
+    </Reference>
     <Reference Include="Facepunch.Network">
       <HintPath>../../Oxide/Games/Unity/Oxide.Game.Rust/Dependencies/Facepunch.Network.dll</HintPath>
     </Reference>
@@ -72,18 +75,13 @@
     <Compile Include="AntiAdminAbuse.cs" />
     <Compile Include="AssetDump.cs" />
     <Compile Include="BabelChat.cs" />
-    <Compile Include="ConnectionDB.cs" />
-    <Compile Include="ConnectionInfo.cs" />
-    <Compile Include="Exodus.cs" />
     <Compile Include="FpsMonitor.cs" />
     <Compile Include="Godmode.cs" />
     <Compile Include="HandyMan.cs" />
-    <Compile Include="Hookie.cs" />
     <Compile Include="LootProtection.cs" />
     <Compile Include="GuiTimer.cs" />
     <Compile Include="MagicArea.cs" />
     <Compile Include="MagicChat.cs" />
-    <Compile Include="MagicCraft.cs" />
     <Compile Include="MagicDescription.cs" />
     <Compile Include="MagicSigns.cs" />
     <Compile Include="MagicTeleportation.cs" />
@@ -93,11 +91,8 @@
     <Compile Include="ReplaceOnBroken.cs" />
     <Compile Include="StructureGrades.cs" />
     <Compile Include="UsableToBelt.cs" />
-    <Compile Include="XpBooster.cs" />
-    <Compile Include="NameManager.cs" />
     <Compile Include="NoDurability.cs" />
     <Compile Include="NoSuicide.cs" />
-    <Compile Include="LimitRCON.cs" />
     <Compile Include="OnDeath.cs" />
     <Compile Include="QuickSort.cs" />
     <Compile Include="RepairBuildings.cs" />
@@ -119,7 +114,6 @@
     <Compile Include="Spectate.cs" />
     <Compile Include="StartProtection.cs" />
     <Compile Include="ThirdPerson.cs" />
-    <Compile Include="VACKicker.cs" />
     <Compile Include="Vanish.cs" />
     <Compile Include="ChatCleaner.cs" />
     <Compile Include="CupboardAway.cs" />
@@ -132,7 +126,6 @@
     <Compile Include="Developer.cs" />
     <Compile Include="Exporter.cs" />
     <Compile Include="FilterExt.cs" />
-    <Compile Include="GatherRewards.cs" />
     <Compile Include="GeoIP.cs" />
     <Compile Include="DevTest.cs" />
     <Compile Include="Prefabs.cs" />
@@ -140,7 +133,7 @@
     <Compile Include="PushTest.cs" />
     <Compile Include="QuickSmelt.cs" />
     <Compile Include="Unstuck.cs" />
-    <Compile Include="ZLevelsRemastered.cs" />
+    <Compile Include="Sleep.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
